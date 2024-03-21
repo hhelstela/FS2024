@@ -19,6 +19,7 @@ const App = () => {
       name: newName,
       number: newNumber
     }
+    const newNames = persons.concat(person)
     const nameList = persons.map(person => person.name)
     console.log(nameList)
     if (!(nameList.includes(newName))) {
@@ -29,7 +30,7 @@ const App = () => {
     }
     setNewName('')
     setNewNumber('')
-    setToShow(persons.filter(person => person.name.toLowerCase().includes(search.toLowerCase()) === true))
+    setToShow(newNames.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
   }
 
 

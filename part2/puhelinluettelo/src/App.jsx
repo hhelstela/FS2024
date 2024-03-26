@@ -39,7 +39,13 @@ const App = () => {
         })
     }
     else {
-      alert(newName + ' is already added to the phonebook')
+      if (window.confirm(person.name + " is already added to the phonebook, replace the old number with a new one?")) {
+        const oldPerson = persons.filter(n => n.name === newName).at(0)
+        const allPersons = persons.map(p => p.id !== oldPerson.id ? p: {...oldPerson, number: newNumber})
+        personService.update(oldPerson.id, {...oldPerson, number: newNumber})
+        setPersons(allPersons)
+        setToShow(allPersons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
+      }
     }
     setNewName('')
     setNewNumber('')
@@ -61,12 +67,15 @@ const App = () => {
     setToShow(persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()) === true))
   }
 
-  const handleDelete = (id) => {
-    personService.remove(id)
+  const handleDelete = (person) => {
+    console.log(person)
+    if (window.confirm("Delete " + person.name)) {
+      personService.remove(person.id)
       .then(response => {
-        setPersons(persons.filter(n => n.id !== id))
-        setToShow(toShow.filter(n => n.id !== id))
+        setPersons(persons.filter(n => n.id !== person.id))
+        setToShow(toShow.filter(n => n.id !== person.id))
       })
+    }
   }
 
   return (

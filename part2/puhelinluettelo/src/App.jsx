@@ -13,7 +13,6 @@ const App = () => {
 
   
   useEffect(() => {
-    console.log('effect')
     personService
     .getAll()
     .then(response => {
@@ -21,7 +20,6 @@ const App = () => {
       setToShow(response.data)
     })
   }, [])
-  console.log(persons)
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -31,12 +29,13 @@ const App = () => {
     }
     const newNames = persons.concat(person)
     const nameList = persons.map(person => person.name)
-    console.log(nameList)
     if (!(nameList.includes(newName))) {
       personService
         .create(person)
         .then(response => {
-          setPersons(persons.concat(response.data))
+          const concatPersons = persons.concat(response.data)
+          setPersons(concatPersons)
+          setToShow(concatPersons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
         })
     }
     else {
@@ -44,12 +43,10 @@ const App = () => {
     }
     setNewName('')
     setNewNumber('')
-    setToShow(newNames.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
   }
 
 
   const handleName = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
@@ -59,12 +56,18 @@ const App = () => {
   }
 
   const handleSearch = (event) => {
-    console.log(event.target.value)
     setNewSearch(event.target.value)
     const newSearch = event.target.value
     setToShow(persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()) === true))
   }
 
+  const handleDelete = (id) => {
+    personService.remove(id)
+      .then(response => {
+        setPersons(persons.filter(n => n.id !== id))
+        setToShow(toShow.filter(n => n.id !== id))
+      })
+  }
 
   return (
     <div>
@@ -75,7 +78,7 @@ const App = () => {
       </h2>
       <PersonForm addPerson={addPerson} newName={newName} handleName={handleName} newNumber={newNumber} handleNumber={handleNumber} />
       <h2>Numbers</h2>
-      <Persons toShow={toShow} />
+      <Persons toShow={toShow} handleDelete={handleDelete}/>
       
     </div>
   )

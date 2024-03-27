@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import infoService from './services/info'
 import SingleCountry from './components/SingleCountry'
 import CountriesToShow from './components/CountriesToShow'
-
+import RenderImage from './components/RenderImage'
 
 const App = () => {
   const [count, setCount] = useState(0)
@@ -11,6 +11,7 @@ const App = () => {
   const [countryInfo, setCountryInfo] = useState([])
   const [singleCountry, setSingleCountry] = useState(null)
   const [countriesToShow, setCountriesToShow] = useState(null)
+  const [imageLink, setImageLink] = useState(null)
 
   useEffect(() => {
     infoService
@@ -27,16 +28,19 @@ const App = () => {
       setFoundInfo(filteredCountries)
       setSingleCountry(filteredCountries.at(0))
       setCountriesToShow(null)
+      setImageLink(filteredCountries.at(0).flags.png)
     }
     else if (filteredCountries.length <= 10) {
         setFoundInfo(filteredCountries)
         setSingleCountry(null)
         setCountriesToShow(filteredCountries.map(country => country.name.common))
+        setImageLink(null)
     } 
     else {
         setFoundInfo([])
         setSingleCountry(null)
         setCountriesToShow(null)
+        setImageLink(null)
     }
   }
 
@@ -53,6 +57,7 @@ const App = () => {
       </form> 
       <SingleCountry country={singleCountry}></SingleCountry>
       <CountriesToShow countryList={countriesToShow}></CountriesToShow>
+      <RenderImage imageLink={imageLink}></RenderImage>
     </div>
   )
 

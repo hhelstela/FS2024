@@ -12,8 +12,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setNewSearch] = useState('')
   const [toShow, setToShow] = useState(persons)
-  const [changeMessage, setChangeMessage] = useState('')
-
+  const [changeMessage, setChangeMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   
   useEffect(() => {
     personService
@@ -28,6 +28,12 @@ const App = () => {
     setChangeMessage(message)
     setTimeout(() => {
       setChangeMessage(null)
+    }, 3000)
+  }
+  const handleErrorMessage = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
     }, 3000)
   }
 
@@ -54,9 +60,18 @@ const App = () => {
         const oldPerson = persons.filter(n => n.name === newName).at(0)
         const allPersons = persons.map(p => p.id !== oldPerson.id ? p: {...oldPerson, number: newNumber})
         personService.update(oldPerson.id, {...oldPerson, number: newNumber})
-        setPersons(allPersons)
-        setToShow(allPersons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
-        handleChangeMessage("Changed the number of: " +  person.name)
+        .then(response => {
+          setPersons(allPersons)
+          setToShow(allPersons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
+          handleChangeMessage("Changed the number of: " +  person.name)
+        })
+        .catch(error => {
+          console.log("error")
+          handleErrorMessage('Information of ' + person.name + ' has already been removed from the server')
+          setPersons(persons.map(p => p.id !== oldPerson.id))
+          setToShow(persons.map(p => p.id !== oldPerson.id).filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
+        })
+        
       }
     }
     setNewName('')
@@ -88,13 +103,20 @@ const App = () => {
         setToShow(toShow.filter(n => n.id !== person.id))
         handleChangeMessage('Deleted ' + person.name + ' from the phonebook')
       })
+      .catch(error => {
+        console.log("error")
+        handleErrorMessage('Information of ' + person.name + ' has already been removed from the server')
+        setPersons(persons.filter(n => n.id !== person.id))
+        setToShow(toShow.filter(n => n.id !== person.id))
+      })
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={changeMessage} />
+      <Notification message={changeMessage} type="change"/>
+      <Notification message={errorMessage} type="error"/>
       <Filter value={search} onChange={handleSearch} />
       <h2>
         add a new

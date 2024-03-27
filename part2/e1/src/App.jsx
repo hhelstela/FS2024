@@ -4,7 +4,7 @@ import Notification from './components/Notification'
 import noteService from './services/notes'
 
 const App = () => {
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState(null)
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -16,7 +16,7 @@ const App = () => {
         setNotes(initialNotes)
       })
   }, [])
-
+  
   const addNote = (event) => {
     event.preventDefault()
     const noteObject = {
@@ -72,6 +72,10 @@ const App = () => {
         <em>Note app, Department of Computer Science, University of Helsinki 2023</em>
       </div>
     )
+  }
+
+  if (!notes) {
+    return null
   }
 
   return (

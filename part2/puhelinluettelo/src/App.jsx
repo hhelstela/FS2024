@@ -3,6 +3,8 @@ import Filter from "./components/Filter"
 import Persons from "./components/Persons"
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
+import Notification from './components/Notification'
+import  './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [search, setNewSearch] = useState('')
   const [toShow, setToShow] = useState(persons)
+  const [changeMessage, setChangeMessage] = useState('')
 
   
   useEffect(() => {
@@ -20,6 +23,13 @@ const App = () => {
       setToShow(response.data)
     })
   }, [])
+
+  const handleChangeMessage = (message) => {
+    setChangeMessage(message)
+    setTimeout(() => {
+      setChangeMessage(null)
+    }, 3000)
+  }
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -36,6 +46,7 @@ const App = () => {
           const concatPersons = persons.concat(response.data)
           setPersons(concatPersons)
           setToShow(concatPersons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
+          handleChangeMessage('Added ' + person.name)
         })
     }
     else {
@@ -45,6 +56,7 @@ const App = () => {
         personService.update(oldPerson.id, {...oldPerson, number: newNumber})
         setPersons(allPersons)
         setToShow(allPersons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) === true))
+        handleChangeMessage("Changed the number of: " +  person.name)
       }
     }
     setNewName('')
@@ -74,6 +86,7 @@ const App = () => {
       .then(response => {
         setPersons(persons.filter(n => n.id !== person.id))
         setToShow(toShow.filter(n => n.id !== person.id))
+        handleChangeMessage('Deleted ' + person.name + ' from the phonebook')
       })
     }
   }
@@ -81,6 +94,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={changeMessage} />
       <Filter value={search} onChange={handleSearch} />
       <h2>
         add a new

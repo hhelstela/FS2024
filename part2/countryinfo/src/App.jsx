@@ -49,6 +49,11 @@ const App = () => {
     handleFoundInfo(event.target.value)
   }
 
+  const handleShowClick = (countryName) => {
+    setSearchField(countryName)
+    handleFoundInfo(countryName)
+  }
+
  
   return (
     <div>
@@ -56,7 +61,7 @@ const App = () => {
         find countries <input value={searchField} onChange={handleSearchChange}/>
       </form> 
       <SingleCountry country={singleCountry}></SingleCountry>
-      <CountriesToShow countryList={countriesToShow}></CountriesToShow>
+      <CountriesToShow countryList={countriesToShow} handleClick={handleShowClick}></CountriesToShow>
       <RenderImage imageLink={imageLink}></RenderImage>
     </div>
   )

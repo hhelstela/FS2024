@@ -3,20 +3,10 @@ const app = express()
 const cors = require('cors')
 
 app.use(cors())
+app.use(express.static('dist'))
 app.use(express.json())
 
-let persons = [
-    {
-        name: 'Henri',
-        number: '054352345',
-        id: 1
-    },
-    {
-        name: 'Liisa',
-        number: '054352345',
-        id: 2
-    }
-]
+let persons = []
 
 app.get('/api/persons', (request, response) => {
     response.send(persons)
@@ -52,7 +42,7 @@ app.delete('/api/persons/:id', (request, response) => {
         
     
 
-const PORT =  3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

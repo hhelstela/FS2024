@@ -1,0 +1,7 @@
+POST https://puhelinluettelo-backend-hhelstela.fly.dev/api/persons
+Content-Type: application/json
+
+{
+    "name": "Tessa",
+    "number": "098098"
+}
